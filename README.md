@@ -34,4 +34,21 @@ Request:
 Response: 
  - `{"success":true}`
  
- Note: The requests take about 2.7 seconds to complete but I can easly deal with that.
+Note: The requests take about 2.7 seconds to complete but I can easly deal with that.
+
+## Setup
+
+```
+sudo apt-get install libcec git
+sudo pip install flask
+cd
+git clone https://github.com/Bouni/flask-hdmi-cec
+cd flask-hdmi-cec
+sudo cp flask-hdmi-cec.service /etc/systemd/stystem
+sudo systemctl daemon-reload
+sudo systemctl enable flask-hdmi-cec.service
+sudo systemctl start flask-hdmi-cec.service
+```
+ 
+I'm aware that the development server should not be used in production, but I'm just to lazy to dig into that.
+
