@@ -11,7 +11,7 @@ cec-client on the other hand worked like a charm for me and I decided to build a
 
 Its most likely mor of a hacky and dirty way to do it but it seems very reliable to me.
 
-# API calls
+## API calls
 
 I just implemented the bare minimum, but its very easy to extend the API if necessary.
 
