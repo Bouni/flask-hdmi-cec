@@ -29,6 +29,7 @@ Response:
 
 Request: 
  - `http://<ip>:4321/on`
+ 
 Response: 
  - `{"success":true}`
  
@@ -36,6 +37,7 @@ Response:
   
 Request: 
  - `http://<ip>:4321/off`
+ 
 Response: 
  - `{"success":true}`
  
