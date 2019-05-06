@@ -16,7 +16,7 @@ Its most likely mor of a hacky and dirty way to do it but it seems very reliable
 I just implemented the bare minimum, but its very easy to extend the API if necessary.
 
 Request: 
- - http://192.168.178.10:4321/state
+ - `http://<ip>:4321/state`
   
 Response: 
  - `{"number":0,"state":"standby"}`
@@ -24,13 +24,13 @@ Response:
  - `{"number":2,"state":"unknown"}`
 
 Request: 
- - http://192.168.178.10:4321/on
+ - `http://<ip>:4321/on`
 Response: 
  - `{"success":true}`
   
   
 Request: 
- - http://192.168.178.10:4321/off
+ - `http://<ip>:4321/off`
 Response: 
  - `{"success":true}`
  
