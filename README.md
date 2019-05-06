@@ -15,6 +15,8 @@ Its most likely mor of a hacky and dirty way to do it but it seems very reliable
 
 I just implemented the bare minimum, but its very easy to extend the API if necessary.
 
+### Get the actual State
+
 Request: 
  - `http://<ip>:4321/state`
   
@@ -23,11 +25,14 @@ Response:
  - `{"number":1,"state":"on"}`
  - `{"number":2,"state":"unknown"}`
 
+### Turn the TV on
+
 Request: 
  - `http://<ip>:4321/on`
 Response: 
  - `{"success":true}`
-  
+ 
+### Turn the TV off
   
 Request: 
  - `http://<ip>:4321/off`
