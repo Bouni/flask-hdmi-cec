@@ -3,7 +3,7 @@ Description=Start Flask HDMI CEC REST application
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3.5 /opt/flask-hdmi-cec/flask-hdmi-cec.py
+ExecStart=/usr/bin/python3 /opt/flask-hdmi-cec/flask-hdmi-cec.py
 Restart=always
 
 [Install]
