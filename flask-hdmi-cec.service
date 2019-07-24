@@ -1,9 +1,10 @@
-[Uniti]
+[Unit]
 Description=Start Flask HDMI CEC REST application
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 /opt/flask-hdmi-cec/flask-hdmi-cec.py
+WorkingDirectory=/opt/flask-hdmi-cec
+ExecStart=/usr/local/bin/gunicorn --bind 0.0.0.0:4321 --workers 1 flask-hdmi-cec:app
 Restart=always
 
 [Install]
