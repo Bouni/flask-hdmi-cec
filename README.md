@@ -51,7 +51,7 @@ sudo pip install flask
 cd /opt
 sudo git clone https://github.com/Bouni/flask-hdmi-cec
 cd flask-hdmi-cec
-sudo cp flask-hdmi-cec.service /etc/systemd/stystem
+sudo cp flask-hdmi-cec.service /etc/systemd/system
 sudo systemctl daemon-reload
 sudo systemctl enable flask-hdmi-cec.service
 sudo systemctl start flask-hdmi-cec.service
