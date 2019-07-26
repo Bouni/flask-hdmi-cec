@@ -28,13 +28,13 @@ class CEC(threading.Thread):
         self._running = False
 
     def _cec_command(self, command):
-        p1 = subprocess.Popen(f'echo "{command} 0"', stdout=subprocess.PIPE, shell=True)
+        p1 = subprocess.Popen('echo "{} 0"'.format(command), stdout=subprocess.PIPE, shell=True)
         p2 = subprocess.Popen('cec-client -s -d 1', stdin=p1.stdout, stdout=subprocess.PIPE, shell=True)
         output, err = p2.communicate()
         for s in ("unknown","standby","on"):
             if s in str(output):
                 return s
-        return f"Undefined output: {output}"
+        return "Undefined output: {}".format(output)
 
     def run(self):
         while self._running:
