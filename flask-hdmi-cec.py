@@ -7,12 +7,20 @@ import threading
 
 class CEC(threading.Thread):
 
+    STATES = {
+        "power status: standby": 0,
+        "power status: on": 1,
+        "power status: in transition from on to standby": 2,
+        "power status: in transition from standby to on": 3,
+        "power status: unknown": 5
+    }
+
     def __init__(self):
         threading.Thread.__init__(self)
         self._running = True
         self._command = None
-        self._state = "unknown"
-
+        self._state = {"text": "unknown", "value": 5}
+    
     def get_state(self):
         return {"state": self._state}
 
@@ -31,10 +39,10 @@ class CEC(threading.Thread):
         p1 = subprocess.Popen('echo "{} 0"'.format(command), stdout=subprocess.PIPE, shell=True)
         p2 = subprocess.Popen('cec-client -s -d 1', stdin=p1.stdout, stdout=subprocess.PIPE, shell=True)
         output, err = p2.communicate()
-        for s in ("unknown","standby","on"):
-            if s in str(output):
-                return s
-        return "Undefined output: {}".format(output)
+        for k,v in self.STATES.items():
+            if k in str(output):
+                return {"text": k[14:], "value": v}
+        return {"text": "unknown", "value": 5}
 
     def run(self):
         while self._running:
@@ -57,15 +65,15 @@ def init():
 
 @app.route("/")
 def state():  
-    return app.config["CEC"].get_state()
+    return jsonify(app.config["CEC"].get_state())
 
 @app.route("/on")
 def on():    
-    return app.config["CEC"].on()
+    return jsonify(app.config["CEC"].on())
 
 @app.route("/off")
 def off():    
-    return app.config["CEC"].off()
+    return jsonify(app.config["CEC"].off())
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=4321, use_reloader=False)
