@@ -18,12 +18,14 @@ I just implemented the bare minimum, but its very easy to extend the API if nece
 ### Get the actual State
 
 Request: 
- - `http://<ip>:4321/state`
+ - `http://<ip>:4321`
   
 Response: 
- - `{"number":0,"state":"standby"}`
- - `{"number":1,"state":"on"}`
- - `{"number":2,"state":"unknown"}`
+ - `{"state":{"text":"standby","value":0}}`
+ - `{"state":{"text":"on","value":1}}`
+ - `{"state":{"text":"in transition from on to standby","value":3}}`
+ - `{"state":{"text":"in transition from standby to on","value":4}}`
+ - `{"state":{"text":"unknown","value":5}}`
 
 ### Turn the TV on
 
@@ -31,7 +33,7 @@ Request:
  - `http://<ip>:4321/on`
  
 Response: 
- - `{"success":true}`
+ - The current state (same json as a state request would return)
  
 ### Turn the TV off
   
@@ -39,15 +41,21 @@ Request:
  - `http://<ip>:4321/off`
  
 Response: 
- - `{"success":true}`
- 
-Note: The requests take about 2.7 seconds to complete but I can easly deal with that.
+ - The current state (same json as a state request would return)
+
+## Function
+
+The application starts a background task that periodically calls `cec-client` to get the CEC state of the TV.
+If a `on` or `off` request is received, the background task will issue a cec-client call to perform the requestet action as soon as the last one has finished. 
+When the state is requestet, tha last known state is returned imedialtely, if a off request comes in before a queued on command is running, the off will overwrite the on command. The same applies  the other way round.
+
+I'm not a 100% sure if this API is perfectly threadsafe, but in my tests so far on two live systems i wasn't able to provoke any unwanted behavior.
 
 ## Setup
 
 ```
-sudo apt-get install libcec git
-sudo pip install flask
+sudo apt-get install libcec4 git
+sudo pip install flask gunicorn
 cd /opt
 sudo git clone https://github.com/Bouni/flask-hdmi-cec
 cd flask-hdmi-cec
@@ -56,6 +64,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable flask-hdmi-cec.service
 sudo systemctl start flask-hdmi-cec.service
 ```
- 
-I'm aware that the development server should not be used in production, but I'm just to lazy to dig into that.
 
+## Notes
+
+I used the latest raspbian buster image for my prouction systems and cannot say for sure ig this will work with other releases!
