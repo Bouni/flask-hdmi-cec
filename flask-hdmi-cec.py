@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from flask import Flask, jsonify
-from flask_cors import CORS
 import subprocess
 import threading
+from flask import Flask, jsonify
+from flask_cors import CORS
+
 
 class CEC(threading.Thread):
 
@@ -21,7 +22,7 @@ class CEC(threading.Thread):
         self._running = True
         self._command = None
         self._state = {"text": "unknown", "value": 5}
-    
+
     def get_state(self):
         return {"state": self._state}
 
@@ -37,10 +38,17 @@ class CEC(threading.Thread):
         self._running = False
 
     def _cec_command(self, command):
-        p1 = subprocess.Popen('echo "{} 0"'.format(command), stdout=subprocess.PIPE, shell=True)
-        p2 = subprocess.Popen('cec-client -s -d 1', stdin=p1.stdout, stdout=subprocess.PIPE, shell=True)
+        p1 = subprocess.Popen(
+            'echo "{} 0"'.format(command),
+            stdout=subprocess.PIPE,
+            shell=True)
+        p2 = subprocess.Popen(
+            'cec-client -s -d 1',
+            stdin=p1.stdout,
+            stdout=subprocess.PIPE,
+            shell=True)
         output, err = p2.communicate()
-        for k,v in self.STATES.items():
+        for k, v in self.STATES.items():
             if k in str(output):
                 return {"text": k[14:], "value": v}
         return {"text": "unknown", "value": 5}
@@ -61,21 +69,26 @@ app = Flask(__name__)
 CORS(app)
 app.config["CEC"] = CEC()
 
+
 @app.before_first_request
 def init():
     app.config["CEC"].start()
 
+
 @app.route("/")
-def state():  
+def state():
     return jsonify(app.config["CEC"].get_state())
 
+
 @app.route("/on")
-def on():    
+def on():
     return jsonify(app.config["CEC"].on())
 
+
 @app.route("/off")
-def off():    
+def off():
     return jsonify(app.config["CEC"].off())
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=4321, use_reloader=False)
