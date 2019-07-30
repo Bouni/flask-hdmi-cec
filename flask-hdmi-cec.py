@@ -6,6 +6,7 @@ import threading
 from flask import Flask, jsonify
 from flask_cors import CORS
 
+lock = threading.Lock()
 
 class CEC(threading.Thread):
 
@@ -51,18 +52,21 @@ class CEC(threading.Thread):
         for k, v in self.STATES.items():
             if k in str(output):
                 return {"text": k[14:], "value": v}
-        return {"text": "unknown", "value": 5}
+        return self._state 
 
     def run(self):
         while self._running:
             if self._command == "on":
-                self._state = self._cec_command("on")
-                self._command = None
+                with lock:
+                    self._state = self._cec_command("on")
+                    self._command = None
             elif self._command == "off":
-                self._state = self._cec_command("standby")
-                self._command = None
+                with lock:
+                    self._state = self._cec_command("standby")
+                    self._command = None
             else:
-                self._state = self._cec_command("pow")
+                with lock:
+                    self._state = self._cec_command("pow")
 
 
 app = Flask(__name__)
