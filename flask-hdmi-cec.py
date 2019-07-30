@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, jsonify
+from flask_cors import CORS
 import subprocess
 import threading
 
@@ -57,6 +58,7 @@ class CEC(threading.Thread):
 
 
 app = Flask(__name__)
+CORS(app)
 app.config["CEC"] = CEC()
 
 @app.before_first_request
