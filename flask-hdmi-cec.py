@@ -8,6 +8,7 @@ from flask_cors import CORS
 
 lock = threading.Lock()
 
+
 class CEC(threading.Thread):
 
     STATES = {
@@ -15,7 +16,7 @@ class CEC(threading.Thread):
         "power status: on": 1,
         "power status: in transition from on to standby": 2,
         "power status: in transition from standby to on": 3,
-        "power status: unknown": 5
+        "power status: unknown": 5,
     }
 
     def __init__(self):
@@ -40,19 +41,16 @@ class CEC(threading.Thread):
 
     def _cec_command(self, command):
         p1 = subprocess.Popen(
-            'echo "{} 0"'.format(command),
-            stdout=subprocess.PIPE,
-            shell=True)
+            'echo "{} 0"'.format(command), stdout=subprocess.PIPE, shell=True
+        )
         p2 = subprocess.Popen(
-            'cec-client -s -d 1',
-            stdin=p1.stdout,
-            stdout=subprocess.PIPE,
-            shell=True)
+            "cec-client -s -d 1", stdin=p1.stdout, stdout=subprocess.PIPE, shell=True
+        )
         output, err = p2.communicate()
         for k, v in self.STATES.items():
             if k in str(output):
                 return {"text": k[14:], "value": v}
-        return self._state 
+        return self._state
 
     def run(self):
         while self._running:
@@ -92,6 +90,13 @@ def on():
 @app.route("/off")
 def off():
     return jsonify(app.config["CEC"].off())
+
+
+@app.route("/restart")
+def restart():
+    p1 = subprocess.Popen("killall xtightvncviewer ", stdout=subprocess.PIPE, shell=True)
+    output, err = p1.communicate()
+    return jsonify({"output": str(output), "error": str(err)})
 
 
 if __name__ == "__main__":
